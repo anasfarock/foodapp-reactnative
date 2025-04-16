@@ -21,7 +21,7 @@ export default function HomeScreen({ navigation, route }) {
         resizeMode="cover"
       >
         <View style={styles.headerContent}>
-          <Text style={styles.title}>Don Juan Pizzeria</Text>
+          <Text style={styles.title}>Health Tailor</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Profile', { userId })}>
             <Ionicons name="person-circle-outline" size={30} color="#fff" />
           </TouchableOpacity>
