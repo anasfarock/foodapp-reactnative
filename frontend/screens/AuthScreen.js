@@ -16,9 +16,24 @@ const AuthScreen = ({ navigation }) => {
   const passwordInputRef = useRef(null);
   const emailInputRef = useRef(null);
 
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
   const handleSubmit = async () => {
     if (!email || !password || (!loginActive && !name)) {
       alert('Please fill in all fields');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+
+    if (password.length < 8) {
+      alert('Password must be at least 8 characters long');
       return;
     }
 

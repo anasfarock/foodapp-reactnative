@@ -16,7 +16,12 @@ export default function ProfileScreen() {
     diseases: [],
     allergies: [],
   });
-
+  
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+  
   const [newDisease, setNewDisease] = useState('');
   const [newAllergy, setNewAllergy] = useState('');
 
@@ -25,9 +30,15 @@ export default function ProfileScreen() {
   };
 
   const handleSave = () => {
+    if (!validateEmail(profile.email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+  
     setIsEditing(false);
     console.log('Profile saved:', profile);
   };
+  
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
