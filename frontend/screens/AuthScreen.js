@@ -1,8 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground, Image, ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, StyleSheet } from 'react-native';
+import {
+  View, Text, TextInput, TouchableOpacity,
+  ImageBackground, Image, ActivityIndicator,
+  KeyboardAvoidingView, Platform, StatusBar, StyleSheet
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const AuthScreen = () => {
+const AuthScreen = ({ navigation }) => {
   const [loginActive, setLoginActive] = useState(true);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
@@ -13,11 +17,24 @@ const AuthScreen = () => {
   const emailInputRef = useRef(null);
 
   const handleSubmit = async () => {
+    if (!email || !password || (!loginActive && !name)) {
+      alert('Please fill in all fields');
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
-      // simulate server delay
       setLoading(false);
-      alert(`${loginActive ? 'Signed in' : 'Account created'} successfully`);
+
+      if (loginActive) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
+      } else {
+        alert('Account created successfully');
+        setLoginActive(true);
+      }
     }, 1500);
   };
 
@@ -28,18 +45,12 @@ const AuthScreen = () => {
     >
       <StatusBar barStyle="light-content" />
       <ImageBackground
-        source={require('../assets/background.png')} // <- add your image
+        source={require('../assets/background.png')}
         style={styles.background}
         resizeMode="cover"
       >
-        <LinearGradient
-          colors={['transparent', '#000']}
-          style={styles.gradient}
-        >
-          <Image
-            source={require('../assets/logo.png')} // <- add your logo
-            style={styles.logo}
-          />
+        <LinearGradient colors={['rgba(0,0,0,0.3)', '#000']} style={styles.gradient}>
+          <Image source={require('../assets/logo.png')} style={styles.logo} />
 
           {!loginActive && (
             <TextInput
@@ -79,24 +90,13 @@ const AuthScreen = () => {
             onSubmitEditing={handleSubmit}
           />
 
-          <TouchableOpacity
-            style={styles.button}
-            activeOpacity={0.7}
-            onPress={handleSubmit}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>
-                {loginActive ? 'Sign In' : 'Sign Up'}
-              </Text>
+          <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={handleSubmit}>
+            {loading ? <ActivityIndicator color="#fff" /> : (
+              <Text style={styles.buttonText}>{loginActive ? 'Sign In' : 'Sign Up'}</Text>
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => setLoginActive(!loginActive)}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity onPress={() => setLoginActive(!loginActive)} activeOpacity={0.7}>
             <Text style={styles.switchText}>
               {loginActive ? 'Create an account' : 'Already have an account?'}
             </Text>
@@ -108,25 +108,12 @@ const AuthScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
+  container: { flex: 1 },
+  background: { flex: 1, width: '100%', height: '100%' },
   gradient: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 30,
+    flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 30,
   },
-  logo: {
-    width: 72,
-    height: 72,
-    marginBottom: 30,
-  },
+  logo: { width: 72, height: 72, marginBottom: 30 },
   input: {
     backgroundColor: '#fff',
     paddingHorizontal: 20,
@@ -145,11 +132,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
+  buttonText: { color: '#fff', fontSize: 15, fontWeight: 'bold' },
   switchText: {
     color: '#fff',
     fontSize: 15,

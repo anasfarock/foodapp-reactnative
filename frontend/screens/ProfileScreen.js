@@ -47,7 +47,7 @@ export default function ProfileScreen() {
         <TextInput
           style={styles.input}
           editable={isEditing}
-          placeholder="Telefone"
+          placeholder="Telephone"
           value={profile.phone}
           onChangeText={(text) => handleChange('phone', text)}
         />
