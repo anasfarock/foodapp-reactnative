@@ -13,32 +13,28 @@ import { Ionicons } from '@expo/vector-icons';
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      {/* Header */}
       <ImageBackground
         source={require('../assets/header-background.png')}
         style={styles.header}
         resizeMode="cover"
       >
         <View style={styles.headerContent}>
-          <Text style={styles.title}>Pizzaria Don Juan</Text>
+          <Text style={styles.title}>Don Juan Pizzeria</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <Ionicons name="person-circle-outline" size={30} color="#fff" />
           </TouchableOpacity>
         </View>
       </ImageBackground>
 
-      {/* Food Cards */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.card}>
           <Image source={{ uri: 'https://i.imgur.com/jVbZ5ZT.png' }} style={styles.cardImage} />
           <View style={styles.cardText}>
             <Text style={styles.cardTitle}>Pizzas</Text>
-            <Text style={styles.cardDesc}>Mais de 50 sabores diferentes.</Text>
+            <Text style={styles.cardDesc}>Over 50 different flavors.</Text>
             <Text style={styles.cardTime}>30 mins</Text>
           </View>
         </View>
-
-        {/* Repeat for more items... */}
       </ScrollView>
     </View>
   );
