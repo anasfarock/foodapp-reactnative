@@ -1,6 +1,6 @@
 ## 🍕 Food App - Fullstack React Native + Node.js Project
 
-A full-stack mobile food ordering app (Under-Construction) built with **React Native** (Expo) for the frontend and **Node.js + Express + Sequelize + SQLite** for the backend. Users can register, log in, and update their profiles, including uploading a photo and managing their disease/allergy records.
+A full-stack mobile food ordering app (Under-development) built with **React Native** (Expo) for the frontend and **Node.js + Express + Sequelize + SQLite** for the backend. Users can register, log in, and update their profiles, including uploading a photo and managing their disease/allergy records.
 
 ---
 
