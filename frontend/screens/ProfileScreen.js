@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, StyleSheet, TouchableOpacity,
-  ScrollView, Image, Alert
+  ScrollView, Image, Alert, ActivityIndicator
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import api from '../api'; // your axios config file
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ route, navigation }) {
+  const userId = route.params?.userId;
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const [profile, setProfile] = useState({
-    name: 'John Doe',
-    email: 'johndoe@email.com',
-    phone: '+92 300 0000000',
+    name: '',
+    email: '',
+    phone: '',
     password: '',
-    photo: 'https://i.pravatar.cc/100',
+    photo: '',
     diseases: [],
     allergies: [],
   });
@@ -28,11 +32,30 @@ export default function ProfileScreen() {
   const validatePassword = (password) =>
     password.length >= 8 && /[A-Za-z]/.test(password) && /\d/.test(password);
 
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get(`/profile/${userId}`);
+      setProfile(res.data);
+    } catch (err) {
+      Alert.alert('Error', 'Failed to load profile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) fetchProfile();
+    else {
+      Alert.alert('Error', 'No user ID found. Redirecting...');
+      navigation.reset({ index: 0, routes: [{ name: 'Auth' }] });
+    }
+  }, []);
+
   const handleChange = (field, value) => {
     setProfile({ ...profile, [field]: value });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validateName(profile.name)) {
       Alert.alert('Invalid Name', 'Name must be at least 3 characters.');
       return;
@@ -53,9 +76,13 @@ export default function ProfileScreen() {
       return;
     }
 
-    setIsEditing(false);
-    Alert.alert('Success', 'Profile saved successfully!');
-    console.log('Profile saved:', profile);
+    try {
+      await api.put(`/profile/${userId}`, profile);
+      Alert.alert('Success', 'Profile updated successfully');
+      setIsEditing(false);
+    } catch (err) {
+      Alert.alert('Error', 'Failed to update profile');
+    }
   };
 
   const pickImage = async () => {
@@ -97,13 +124,21 @@ export default function ProfileScreen() {
     setProfile({ ...profile, allergies: updated });
   };
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#e60023" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>My Profile</Text>
 
       <View style={styles.card}>
         <TouchableOpacity onPress={isEditing ? pickImage : null} style={styles.avatarWrapper}>
-          <Image source={{ uri: profile.photo }} style={styles.avatar} />
+          <Image source={{ uri: profile.photo || 'https://i.pravatar.cc/100' }} style={styles.avatar} />
           {isEditing && (
             <View style={styles.cameraOverlay}>
               <Ionicons name="camera-outline" size={20} color="#fff" />
@@ -111,6 +146,7 @@ export default function ProfileScreen() {
           )}
         </TouchableOpacity>
 
+        {/* Inputs */}
         <TextInput
           style={styles.input}
           editable={isEditing}
@@ -149,6 +185,7 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Diseases */}
         <Text style={styles.sectionTitle}>Diseases</Text>
         {profile.diseases.map((disease, index) => (
           <View key={index} style={styles.listRow}>
@@ -174,6 +211,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
+        {/* Allergies */}
         <Text style={styles.sectionTitle}>Allergies</Text>
         {profile.allergies.map((allergy, index) => (
           <View key={index} style={styles.listRow}>

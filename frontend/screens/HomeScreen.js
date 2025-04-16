@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, route }) {
+  const userId = route?.params?.userId; // 🔥 grab userId from login
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -20,7 +22,7 @@ export default function HomeScreen({ navigation }) {
       >
         <View style={styles.headerContent}>
           <Text style={styles.title}>Don Juan Pizzeria</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile', { userId })}>
             <Ionicons name="person-circle-outline" size={30} color="#fff" />
           </TouchableOpacity>
         </View>

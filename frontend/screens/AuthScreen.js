@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView, Platform, StatusBar, StyleSheet
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import api from '../api';
 
 const AuthScreen = ({ navigation }) => {
   const [loginActive, setLoginActive] = useState(true);
@@ -20,7 +21,6 @@ const AuthScreen = ({ navigation }) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
-
   const handleSubmit = async () => {
     if (!email || !password || (!loginActive && !name)) {
       alert('Please fill in all fields');
@@ -37,20 +37,26 @@ const AuthScreen = ({ navigation }) => {
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      setLoading(true);
 
       if (loginActive) {
+        const res = await api.post('/login', { email, password });
+        setLoading(false);
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: 'Home', params: { userId: res.data.id } }],
         });
       } else {
+        await api.post('/register', { name, email, password, phone: '+000000000', photo: '', diseases: [], allergies: [] });
+        setLoading(false);
         alert('Account created successfully');
         setLoginActive(true);
       }
-    }, 1500);
+    } catch (err) {
+      setLoading(false);
+      alert('Something went wrong. Check your credentials or server.');
+    }
   };
 
   return (
