@@ -41,14 +41,14 @@ npm install express sequelize sqlite3 cors bcryptjs
 ### ▶️ 3. Start the backend server
 
 ```bash
-node server.js
+node run dev
 ```
 
 > Optionally use `nodemon` for auto-reloading:
 
 ```bash
 npm install --save-dev nodemon
-npx nodemon server.js
+npx nodemon run dev
 ```
 
 The backend will run on:
